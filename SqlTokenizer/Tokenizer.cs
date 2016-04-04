@@ -20,6 +20,9 @@ namespace SqlTokenizer
 
         public Tokenizer(string source)
         {
+            if (source == null)
+                throw new ArgumentNullException("source");
+
             this.queue = new Queue<Token>();
             this.buffer = new StringBuilder();
             this.reader = new StringReader(source);

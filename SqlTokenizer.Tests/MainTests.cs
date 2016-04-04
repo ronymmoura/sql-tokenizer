@@ -8,12 +8,42 @@ namespace SqlTokenizer.Tests
     public class MainTests
     {
         [TestMethod]
-        public void CanGenerateTokens()
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void Tokenizer_CanGenerateTokens_ArgumentNullExceptionThrown()
         {
-            var tokenizer = new Tokenizer("SELECT");
+            var tokenizer = new Tokenizer(null);
+            var tokens = tokenizer.GetTokens();
+        }
+
+        [TestMethod]
+        public void Tokenizer_CanGenerateTokens_Generated()
+        {
+            var tokenizer = new Tokenizer("");
             var tokens = tokenizer.GetTokens();
 
-            Assert.AreNotEqual(0, tokens.Count);
+            Assert.AreEqual(0, tokens.Count);
+        }
+
+        [TestMethod]
+        public void Tokenizer_CanGenerateSelectTokens_Generated()
+        {
+            var tokenizer = new Tokenizer("SELECT * FROM TEST");
+            var tokens = tokenizer.GetTokens();
+
+            Assert.AreEqual(4, tokens.Count);
+        }
+
+        [TestMethod]
+        public void Tokenizer_CanGenerateSelectTokensWithVariables_Generated()
+        {
+            var tokenizer = new Tokenizer("SELECT * FROM TEST WHERE ID = @ID");
+            var tokens = tokenizer.GetTokens();
+
+            Assert.AreEqual(8, tokens.Count);
+
+            var contains = tokens.Contains(TokenType.Variable, "@ID");
+
+            Assert.AreEqual(true, contains);
         }
     }
 }
