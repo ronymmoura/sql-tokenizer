@@ -8,15 +8,27 @@ namespace SqlTokenizer
 {
     public class Tokenizer
     {
+        #region Fields 
+
         private StringReader reader;
         private Queue<Token> queue;
         private StringBuilder buffer;
         private char currentChar;
 
+        private string[] keywords = {
+            "SELECT", "FROM", "WHERE", "UNION", "ORDER", "BY", "AS", "ALL", "DISTINCT", "CAST", "YEAR",
+            "MONTH", "DAY", "DATEPART", "AND", "OR", "NOLOCK", "INSERT", "VALUES", "INTO", "UPDATE", "SET", "DELETE", "VARCHAR",
+            "NUMERIC", "DATETIME", "CHAR","MAX", "MIN", "COUNT", "HAVING", "CASE", "WHEN", "THEN", "ELSE", "END", "IN", "EXISTS",
+            "ISNULL", "SUM", "AVG", "TOP", "SCOPE_IDENTITY", "INT", "CONVERT", "BETWEEN", "GETDATE", "INNER", "JOIN", "OUTER",
+            "LEFT", "RIGHT", "DATEADD", "LIKE", "ON", "IS", "NULL", "DESC", "ASC", "CROSS", "NOT", "EXISTS", "WITH", "GROUP", "ALL"
+        };
+
         private bool End
         {
             get { return currentChar == '\0'; }
         }
+
+        #endregion
 
         public Tokenizer(string source)
         {
@@ -28,6 +40,8 @@ namespace SqlTokenizer
             this.reader = new StringReader(source);
             this.ReadNextChar();
         }
+
+        #region Public Methods
 
         public Queue<Token> GetTokens()
         {
@@ -41,6 +55,8 @@ namespace SqlTokenizer
 
             return this.queue;
         }
+
+        #endregion
 
         #region Private Methods
 
@@ -75,14 +91,20 @@ namespace SqlTokenizer
         {
             switch (currentChar)
             {
+                case '+':
+                case '-':
                 case '*':
-                case ',':
-                case '=':
-                case ';':
+                case '/':
+                case '^':
                 case '(':
                 case ')':
-                case '>':
-                case '<':
+                case '[':
+                case ']':
+                case ';':
+                case ':':
+                case '=':
+                case '.':
+                case ',':
                     var token = new Token { Value = currentChar.ToString(), Type = TokenType.Symbol };
                     this.buffer.Clear();
                     this.ReadNextChar();
